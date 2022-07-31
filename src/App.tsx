@@ -9,18 +9,19 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import * as calculations from "./util/calculations";
 
 interface GrowthTableCell {
   name: number;
   value: number;
 }
 
-const usdFormatter = new Intl.NumberFormat("en-US", {
+const usdFormatter: Intl.NumberFormat = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
-const tickFormatter = (value: number) => {
+const tickFormatter = (value: number): string => {
   if (value > 1000000000) {
     return `$${(value / 1000000000).toString()}B`;
   } else if (value > 1000000) {
@@ -33,6 +34,11 @@ const tickFormatter = (value: number) => {
 };
 
 function App() {
+  const [currentAge, setCurrentAge] = useState<number>(30);
+  const [retirementAge, setRetirementAge] = useState<number>(67);
+  const [totalYearsOfRetirement, setTotalYearsOfRetirement] =
+    useState<number>(30);
+  const [percentageInflation, setPercentageInflation] = useState<number>(4);
   const [income, setIncome] = useState<number>(154000);
   const [percentageSavedAnnually, setPercentageSavedAnnually] =
     useState<number>(7);
@@ -49,83 +55,29 @@ function App() {
     percentageIncomeRequiredAtRetirement,
     setPercentageIncomeRequiredAtRetirement,
   ] = useState<number>(60);
+  const [
+    percentageExpectedRetirementExpensesGrowth,
+    setPercentageExpectedRetirementExpensesGrowth,
+  ] = useState<number>(3);
 
-  console.log(percentageExpectedAnnualReturn);
-
-  const currentAge = 30;
-  const ageAtRetirement = 67;
   const incomeRequiredAtRetirement =
     income * percentageIncomeRequiredAtRetirement * 0.01;
-  const totalYearsOfRetirement = 30;
-  const amountSavedAnnually = income * percentageSavedAnnually * 0.01;
-  const percentageInflation = 4;
-
-  const computeIncomeRequiredForCurrentYear = (
-    ageAtRetirement: number,
-    currentAge: number,
-    firstYearIncomeRequiredAtRetirement: number
-  ): number => {
-    const multiplier = 0.03;
-    const isFirstYear = currentAge - ageAtRetirement === 0;
-    let incomeRequiredForCurrentAge;
-
-    if (isFirstYear) {
-      incomeRequiredForCurrentAge = firstYearIncomeRequiredAtRetirement;
-    } else {
-      incomeRequiredForCurrentAge =
-        firstYearIncomeRequiredAtRetirement +
-        firstYearIncomeRequiredAtRetirement *
-          (currentAge - ageAtRetirement) *
-          multiplier;
-    }
-
-    return incomeRequiredForCurrentAge;
-  };
 
   const calculate = (): void => {
-    let i = 0;
-    let age = currentAge;
-    let amount = income + amountSavedAlready;
+    const table = calculations.calculateGrowthTable(
+      currentAge,
+      retirementAge,
+      totalYearsOfRetirement,
+      income,
+      percentageSavedAnnually,
+      incomeRequiredAtRetirement,
+      amountSavedAlready,
+      percentageExpectedAnnualReturn,
+      percentageInflation,
+      percentageExpectedRetirementExpensesGrowth
+    );
 
-    // Compute growth
-    while (age < ageAtRetirement) {
-      amount =
-        amount +
-        amountSavedAnnually +
-        amount * percentageExpectedAnnualReturn * 0.01;
-
-      growthTable[i] = {
-        name: age,
-        value: amount,
-      };
-
-      age++;
-      i++;
-    }
-
-    // Compute usage in retirement
-    while (age < ageAtRetirement + totalYearsOfRetirement) {
-      // Add back growth of funds for this year
-      amount += amount * percentageExpectedAnnualReturn * 0.01;
-
-      amount -= computeIncomeRequiredForCurrentYear(
-        ageAtRetirement,
-        age,
-        incomeRequiredAtRetirement
-      );
-
-      amount -= amount * percentageInflation * 0.01;
-
-      growthTable[i] = {
-        name: age,
-        value: amount,
-      };
-
-      age++;
-      i++;
-    }
-
-    setGrowthTable([...growthTable]);
+    setGrowthTable([...table]);
   };
 
   return (
@@ -137,6 +89,29 @@ function App() {
       }}
     >
       <div style={{ display: "flex", flexDirection: "column" }}>
+        <label>Current Age</label>
+        <input
+          type="number"
+          value={currentAge}
+          onChange={(e) => setCurrentAge(parseFloat(e.target.value))}
+        />
+
+        <label>Retirement Age</label>
+        <input
+          type="number"
+          value={retirementAge}
+          onChange={(e) => setRetirementAge(parseFloat(e.target.value))}
+        />
+
+        <label>Total Years of Retirement</label>
+        <input
+          type="number"
+          value={totalYearsOfRetirement}
+          onChange={(e) =>
+            setTotalYearsOfRetirement(parseFloat(e.target.value))
+          }
+        />
+
         <label>Income</label>
         <input
           type="number"
@@ -144,7 +119,7 @@ function App() {
           onChange={(e) => setIncome(parseFloat(e.target.value))}
         />
 
-        <label>Percentage saved annually</label>
+        <label>Percentage of Income Saved Annually</label>
         <input
           type="number"
           value={percentageSavedAnnually}
@@ -153,14 +128,14 @@ function App() {
           }
         />
 
-        <label>Amount saved already</label>
+        <label>Current Amount Saved</label>
         <input
           type="number"
           value={amountSavedAlready}
           onChange={(e) => setAmountSavedAlready(parseFloat(e.target.value))}
         />
 
-        <label>Percentage income required at retirement</label>
+        <label>Percentage of Income Required at Retirement</label>
         <input
           type="number"
           value={percentageIncomeRequiredAtRetirement}
@@ -169,12 +144,30 @@ function App() {
           }
         />
 
-        <label>Expected annual return on investments</label>
+        <label>Expected Annual Return on Investments</label>
         <input
           type="number"
           value={percentageExpectedAnnualReturn}
           onChange={(e) =>
             setPercentageExpectedAnnualReturn(parseFloat(e.target.value))
+          }
+        />
+
+        <label>Expected Rate of Inflation</label>
+        <input
+          type="number"
+          value={percentageInflation}
+          onChange={(e) => setPercentageInflation(parseFloat(e.target.value))}
+        />
+
+        <label>Expected Rate of Increase in Retirement Expenses YoY</label>
+        <input
+          type="number"
+          value={percentageExpectedRetirementExpensesGrowth}
+          onChange={(e) =>
+            setPercentageExpectedRetirementExpensesGrowth(
+              parseFloat(e.target.value)
+            )
           }
         />
 
