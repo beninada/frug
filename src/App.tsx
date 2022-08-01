@@ -18,10 +18,10 @@ function App() {
   const [totalYearsOfRetirement, setTotalYearsOfRetirement] =
     useState<number>(30);
   const [percentageInflation, setPercentageInflation] = useState<number>(4);
-  const [income, setIncome] = useState<number>(154000);
+  const [income, setIncome] = useState<number>(0);
   const [percentageSavedAnnually, setPercentageSavedAnnually] =
     useState<number>(7);
-  const [amountSavedAlready, setAmountSavedAlready] = useState<number>(60000);
+  const [amountSavedAlready, setAmountSavedAlready] = useState<number>(0);
   const [percentageExpectedAnnualReturn, setPercentageExpectedAnnualReturn] =
     useState<number>(5);
   const [growthTable, setGrowthTable] = useState<Array<GrowthTableCell>>([
@@ -33,7 +33,7 @@ function App() {
   const [
     percentageIncomeRequiredAtRetirement,
     setPercentageIncomeRequiredAtRetirement,
-  ] = useState<number>(60);
+  ] = useState<number>(80);
 
   const calculate = (): void => {
     const table = calculations.calculateGrowthTable(
