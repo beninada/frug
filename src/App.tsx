@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import "./App.css";
 import {
   LineChart,
   Line,
@@ -10,28 +9,8 @@ import {
   Legend,
 } from "recharts";
 import * as calculations from "./util/calculations";
-
-interface GrowthTableCell {
-  name: number;
-  value: number;
-}
-
-const usdFormatter: Intl.NumberFormat = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
-
-const tickFormatter = (value: number): string => {
-  if (value > 1000000000) {
-    return `$${(value / 1000000000).toString()}B`;
-  } else if (value > 1000000) {
-    return `$${(value / 1000000).toString()}M`;
-  } else if (value > 10000) {
-    return `$${(value / 1000).toString()}K`;
-  } else {
-    return `$${value.toString()}`;
-  }
-};
+import * as formatters from "./util/formatters";
+import { GrowthTableCell } from "./types";
 
 function App() {
   const [currentAge, setCurrentAge] = useState<number>(30);
@@ -56,9 +35,6 @@ function App() {
     setPercentageIncomeRequiredAtRetirement,
   ] = useState<number>(60);
 
-  const incomeRequiredAtRetirement =
-    income * percentageIncomeRequiredAtRetirement * 0.01;
-
   const calculate = (): void => {
     const table = calculations.calculateGrowthTable(
       currentAge,
@@ -66,10 +42,10 @@ function App() {
       totalYearsOfRetirement,
       income,
       percentageSavedAnnually,
-      incomeRequiredAtRetirement,
+      percentageIncomeRequiredAtRetirement,
       amountSavedAlready,
       percentageExpectedAnnualReturn,
-      percentageInflation,
+      percentageInflation
     );
 
     setGrowthTable([...table]);
@@ -161,10 +137,16 @@ function App() {
       <div>
         <LineChart width={400} height={400} data={growthTable}>
           <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip formatter={(value: number) => usdFormatter.format(value)} />
+          <Tooltip
+            formatter={(value: number) => formatters.usdFormatter.format(value)}
+          />
           <Legend />
           <XAxis dataKey="name" />
-          <YAxis dataKey="value" tickFormatter={tickFormatter} unit="$" />
+          <YAxis
+            dataKey="value"
+            tickFormatter={formatters.tickFormatter}
+            unit="$"
+          />
           <Line type="monotone" dataKey="value" stroke="#8884d8" />
         </LineChart>
 
@@ -173,11 +155,12 @@ function App() {
             {growthTable.map((item) => (
               <tr key={item.name}>
                 <td>{item.name}</td>
-                <td>{usdFormatter.format(item.value)}</td>
+                <td>{formatters.usdFormatter.format(item.value)}</td>
               </tr>
             ))}
           </tbody>
         </table>
+
       </div>
     </div>
   );

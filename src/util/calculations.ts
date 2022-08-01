@@ -1,7 +1,4 @@
-interface GrowthTableCell {
-  name: number;
-  value: number;
-}
+import { GrowthTableCell } from "../types";
 
 const calculateIncomeRequiredForCurrentYear = (
   ageAtRetirement: number,
@@ -31,7 +28,7 @@ export const calculateGrowthTable = (
   totalYearsOfRetirement: number,
   income: number,
   percentageSavedAnnually: number,
-  incomeRequiredAtRetirement: number,
+  percentageIncomeRequiredAtRetirement: number,
   amountSavedAlready: number,
   percentageExpectedAnnualReturn: number,
   percentageInflation: number
@@ -40,6 +37,8 @@ export const calculateGrowthTable = (
   let i = 0;
   let age = currentAge + 1;
   let amount = amountSavedAlready;
+  const incomeRequiredAtRetirement =
+    income * percentageIncomeRequiredAtRetirement * 0.01;
   const amountSavedAnnually = income * percentageSavedAnnually * 0.01;
 
   // Compute growth
