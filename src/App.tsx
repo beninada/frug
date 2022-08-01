@@ -55,10 +55,6 @@ function App() {
     percentageIncomeRequiredAtRetirement,
     setPercentageIncomeRequiredAtRetirement,
   ] = useState<number>(60);
-  const [
-    percentageExpectedRetirementExpensesGrowth,
-    setPercentageExpectedRetirementExpensesGrowth,
-  ] = useState<number>(5);
 
   const incomeRequiredAtRetirement =
     income * percentageIncomeRequiredAtRetirement * 0.01;
@@ -74,7 +70,6 @@ function App() {
       amountSavedAlready,
       percentageExpectedAnnualReturn,
       percentageInflation,
-      percentageExpectedRetirementExpensesGrowth
     );
 
     setGrowthTable([...table]);
@@ -158,17 +153,6 @@ function App() {
           type="number"
           value={percentageInflation}
           onChange={(e) => setPercentageInflation(parseFloat(e.target.value))}
-        />
-
-        <label>Expected Rate of Increase in Retirement Expenses YoY</label>
-        <input
-          type="number"
-          value={percentageExpectedRetirementExpensesGrowth}
-          onChange={(e) =>
-            setPercentageExpectedRetirementExpensesGrowth(
-              parseFloat(e.target.value)
-            )
-          }
         />
 
         <button onClick={calculate}>Calculate</button>

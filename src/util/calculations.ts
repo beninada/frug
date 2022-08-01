@@ -7,7 +7,7 @@ const calculateIncomeRequiredForCurrentYear = (
   ageAtRetirement: number,
   currentAge: number,
   firstYearIncomeRequiredAtRetirement: number,
-  percentageExpectedRetirementExpensesGrowth: number
+  percentageInflation: number
 ): number => {
   const isFirstYear = currentAge - ageAtRetirement === 0;
   let incomeRequiredForCurrentAge;
@@ -19,7 +19,7 @@ const calculateIncomeRequiredForCurrentYear = (
       firstYearIncomeRequiredAtRetirement +
       firstYearIncomeRequiredAtRetirement *
         (currentAge - ageAtRetirement) *
-        (percentageExpectedRetirementExpensesGrowth * 0.01);
+        (percentageInflation * 0.01);
   }
 
   return incomeRequiredForCurrentAge;
@@ -34,8 +34,7 @@ export const calculateGrowthTable = (
   incomeRequiredAtRetirement: number,
   amountSavedAlready: number,
   percentageExpectedAnnualReturn: number,
-  percentageInflation: number,
-  percentageExpectedRetirementExpensesGrowth: number
+  percentageInflation: number
 ): Array<GrowthTableCell> => {
   const table = [];
   let i = 0;
@@ -66,11 +65,8 @@ export const calculateGrowthTable = (
       retirementAge,
       age,
       incomeRequiredAtRetirement,
-      percentageExpectedRetirementExpensesGrowth
+      percentageInflation
     );
-
-    // Adjust for inflation
-    amount -= amount * percentageInflation * 0.01;
 
     table[i] = {
       name: age,
