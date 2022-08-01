@@ -58,7 +58,7 @@ function App() {
   const [
     percentageExpectedRetirementExpensesGrowth,
     setPercentageExpectedRetirementExpensesGrowth,
-  ] = useState<number>(3);
+  ] = useState<number>(5);
 
   const incomeRequiredAtRetirement =
     income * percentageIncomeRequiredAtRetirement * 0.01;
@@ -184,6 +184,7 @@ function App() {
             dataKey="value"
             label="Savings"
             tickFormatter={tickFormatter}
+            unit="$"
           />
           <Line type="monotone" dataKey="value" stroke="#8884d8" />
         </LineChart>
