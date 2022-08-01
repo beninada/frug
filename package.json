@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "CLOUDFLARE_ACCOUNT_ID=646131d80bde062b2eee35bfcf4767a8 npx wrangler pages publish dist"
   },
   "dependencies": {
     "react": "^18.2.0",
