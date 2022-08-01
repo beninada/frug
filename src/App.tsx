@@ -179,13 +179,8 @@ function App() {
           <CartesianGrid strokeDasharray="3 3" />
           <Tooltip formatter={(value: number) => usdFormatter.format(value)} />
           <Legend />
-          <XAxis dataKey="name" label="Age" />
-          <YAxis
-            dataKey="value"
-            label="Savings"
-            tickFormatter={tickFormatter}
-            unit="$"
-          />
+          <XAxis dataKey="name" />
+          <YAxis dataKey="value" tickFormatter={tickFormatter} unit="$" />
           <Line type="monotone" dataKey="value" stroke="#8884d8" />
         </LineChart>
 
